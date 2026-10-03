@@ -8,9 +8,11 @@
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
+        try {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+        } catch (e) {}
     </script>
     <script>
         tailwind.config = {
@@ -53,7 +55,7 @@
         .gradient-bg {
             background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
         }
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300">
@@ -111,7 +113,7 @@
                     </a>
                 </div>
 
-                <div class="flex items-center gap-6 pt-6 text-slate-500 dark:text-slate-400">
+                <div class="flex flex-wrap items-center gap-x-6 gap-y-2 pt-6 text-slate-500 dark:text-slate-400">
                     <span class="text-xs uppercase font-mono tracking-wider text-slate-400">Previously at</span>
                     <span class="font-semibold text-slate-700 dark:text-slate-200">Wells Fargo</span>
                     <span class="text-slate-300 dark:text-slate-700">•</span>
@@ -322,7 +324,9 @@
         const themeToggle = document.getElementById('themeToggle');
         themeToggle.addEventListener('click', () => {
             const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            try {
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            } catch (e) {}
         });
 
         // Typing effect
