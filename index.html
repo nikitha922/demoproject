@@ -1,363 +1,962 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nikitha Madishetty | Senior Frontend Engineer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <meta name="description" content="Nikitha Madishetty — Senior Frontend Engineer building design systems, micro-frontends and LLM-powered interfaces with React, Next.js and TypeScript.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>
-        try {
-            if (localStorage.getItem('theme') === 'dark') {
-                document.documentElement.classList.add('dark');
-            }
-        } catch (e) {}
-    </script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['Fira Code', 'monospace'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#f0fdf4',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                            Primary: '#6366f1',
-                            Accent: '#06b6d4',
-                        }
-                    }
+        (function () {
+            try {
+                var root = document.documentElement;
+                var theme = localStorage.getItem('theme');
+                if (theme === 'light') root.setAttribute('data-theme', 'light');
+                var tokens = JSON.parse(localStorage.getItem('tokens') || 'null');
+                if (tokens) {
+                    if (tokens.accent) root.style.setProperty('--accent', tokens.accent);
+                    if (tokens.radius != null) root.style.setProperty('--radius', tokens.radius + 'px');
+                    if (tokens.motion === false) root.setAttribute('data-motion', 'off');
                 }
-            }
-        }
+            } catch (e) {}
+        })();
     </script>
     <style>
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+        :root {
+            --accent: #7c5cff;
+            --accent-2: #22d3ee;
+            --radius: 18px;
+            --bg: #07070d;
+            --bg-2: #0d0d17;
+            --surface: rgba(255, 255, 255, 0.04);
+            --surface-solid: #11111c;
+            --border: rgba(255, 255, 255, 0.09);
+            --text: #ececf3;
+            --muted: #9b9bb2;
+            --platform: #1a1a2b;
+            --block: #26263b;
+            --tower: #2f2f4a;
+            --font-display: 'Space Grotesk', system-ui, sans-serif;
+            --font-body: 'Inter', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+            color-scheme: dark;
         }
-        .dark .glass {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+        [data-theme="light"] {
+            --bg: #f5f4fb;
+            --bg-2: #ecebf6;
+            --surface: rgba(255, 255, 255, 0.7);
+            --surface-solid: #ffffff;
+            --border: rgba(20, 20, 40, 0.1);
+            --text: #15151f;
+            --muted: #5c5c73;
+            --platform: #e4e2f3;
+            --block: #d3d0ea;
+            --tower: #ffffff;
+            color-scheme: light;
         }
-        .gradient-text {
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background .4s ease, color .4s ease;
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background:
+                radial-gradient(60rem 40rem at 85% -10%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%),
+                radial-gradient(40rem 30rem at -10% 30%, color-mix(in srgb, var(--accent-2) 12%, transparent), transparent 60%);
+            pointer-events: none; z-index: -1;
         }
-        html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+        a { color: inherit; text-decoration: none; }
+        button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+        .container { width: min(1180px, 100% - 3rem); margin-inline: auto; }
+        .mono { font-family: var(--font-mono); }
+        .accent { color: var(--accent); }
+        .muted { color: var(--muted); }
+
+        /* Nav */
+        .nav {
+            position: fixed; top: 1rem; left: 50%; transform: translateX(-50%);
+            width: min(1180px, 100% - 2rem); z-index: 50;
+            display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+            padding: .6rem .7rem .6rem 1.1rem;
+            background: color-mix(in srgb, var(--bg) 70%, transparent);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+        }
+        .logo { font-family: var(--font-mono); font-weight: 500; display: flex; align-items: center; gap: .5rem; }
+        .logo-mark {
+            display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
+            background: var(--accent); color: #fff; font-size: .8rem; font-weight: 600;
+            box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 60%, transparent);
+        }
+        .nav-links { display: flex; gap: 1.6rem; font-size: .92rem; color: var(--muted); }
+        .nav-links a:hover { color: var(--text); }
+        .nav-actions { display: flex; align-items: center; gap: .5rem; }
+        .kbd-btn, .icon-btn {
+            display: inline-flex; align-items: center; gap: .45rem;
+            height: 38px; padding: 0 .85rem; border-radius: 999px;
+            border: 1px solid var(--border); background: var(--surface);
+            font-size: .82rem; color: var(--muted); transition: border-color .2s, color .2s;
+        }
+        .icon-btn { width: 38px; padding: 0; justify-content: center; }
+        .kbd-btn:hover, .icon-btn:hover { color: var(--text); border-color: var(--accent); }
+        kbd { white-space: nowrap; font-family: var(--font-mono); font-size: .72rem; padding: .1rem .35rem; border-radius: 5px; border: 1px solid var(--border); }
+        .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .sun { display: none; }
+        [data-theme="light"] .sun { display: block; }
+        [data-theme="light"] .moon { display: none; }
+
+        /* Hero */
+        .hero { min-height: 100vh; padding: 7.5rem 0 3rem; display: flex; align-items: center; }
+        .hero-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 2rem; align-items: center; }
+        .eyebrow {
+            display: inline-flex; align-items: center; gap: .55rem;
+            padding: .35rem .8rem; border-radius: 999px; font-size: .8rem;
+            border: 1px solid var(--border); background: var(--surface); color: var(--muted);
+        }
+        .pulse { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 0 rgba(34,197,94,.6); animation: pulse 2s infinite; }
+        @keyframes pulse { to { box-shadow: 0 0 0 10px rgba(34,197,94,0); } }
+        .hero h1 {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: clamp(2.6rem, 6vw, 4.8rem); line-height: 1.02; letter-spacing: -0.03em;
+            margin: 1.2rem 0 .6rem;
+        }
+        .hero h2 { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.15rem, 2vw, 1.5rem); color: var(--muted); min-height: 2.2em; }
+        .typing { color: var(--accent); }
+        .caret { display: inline-block; width: 2px; height: 1.1em; background: var(--accent); vertical-align: -0.15em; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        .hero p.lead { max-width: 34rem; color: var(--muted); margin: 1rem 0 1.8rem; font-size: 1.05rem; }
+        .hero p.lead strong { color: var(--text); font-weight: 600; }
+        .cta-row { display: flex; flex-wrap: wrap; gap: .75rem; }
+        .btn {
+            display: inline-flex; align-items: center; gap: .5rem;
+            padding: .8rem 1.3rem; border-radius: var(--radius); font-weight: 600; font-size: .95rem;
+            border: 1px solid var(--border); background: var(--surface); transition: transform .2s, border-color .2s, box-shadow .2s;
+        }
+        .btn:hover { transform: translateY(-2px); border-color: var(--accent); }
+        .btn-primary { background: var(--accent); border-color: transparent; color: #fff; box-shadow: 0 10px 30px -10px var(--accent); }
+        .hint { margin-top: 1.6rem; font-size: .82rem; color: var(--muted); display: flex; align-items: center; gap: .5rem; }
+        .hint::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+
+        .stage { position: relative; height: min(640px, 72vh); border-radius: calc(var(--radius) + 10px); }
+        .stage canvas { display: block; width: 100% !important; height: 100% !important; }
+        .stage-fallback {
+            position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
+            border: 1px dashed var(--border); border-radius: inherit; color: var(--muted); text-align: center; padding: 2rem;
+        }
+        .stage.no-webgl .stage-fallback { display: flex; }
+        .hotspot {
+            position: absolute; left: 0; top: 0; transform: translate(-50%, -100%);
+            display: flex; align-items: center; gap: .45rem; white-space: nowrap;
+            padding: .4rem .75rem .4rem .45rem; border-radius: 999px; font-size: .78rem; font-weight: 600;
+            background: color-mix(in srgb, var(--surface-solid) 85%, transparent);
+            border: 1px solid var(--border); backdrop-filter: blur(8px);
+            box-shadow: 0 8px 24px -12px rgba(0,0,0,.5);
+            transition: border-color .2s, opacity .3s; opacity: 0;
+        }
+        .hotspot.ready { opacity: 1; }
+        .hotspot:hover, .hotspot.active { border-color: var(--accent); }
+        .hotspot .dot { width: 18px; height: 18px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; color: #fff; font-size: .62rem; }
+        .hotspot .yr { color: var(--muted); font-weight: 500; font-family: var(--font-mono); }
+
+        /* Sections */
+        section.block { padding: 6rem 0; }
+        .section-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 2.8rem; }
+        .section-head .tag { font-family: var(--font-mono); font-size: .8rem; color: var(--accent); }
+        .section-head h2 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -0.02em; line-height: 1.1; margin-top: .4rem; }
+        .section-head p { color: var(--muted); max-width: 30rem; }
+        .card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Stats */
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        .stat { padding: 1.4rem; }
+        .stat b { display: block; font-family: var(--font-display); font-size: 2.2rem; letter-spacing: -0.02em; }
+        .stat span { color: var(--muted); font-size: .88rem; }
+
+        /* Journey: git log */
+        .gitlog { position: relative; display: grid; gap: 1.2rem; }
+        .gitlog::before {
+            content: ''; position: absolute; left: 19px; top: 10px; bottom: 10px; width: 2px;
+            background: linear-gradient(var(--accent), var(--accent-2), transparent);
+        }
+        .commit { position: relative; padding-left: 3.4rem; }
+        .commit::before {
+            content: ''; position: absolute; left: 11px; top: 1.6rem; width: 18px; height: 18px; border-radius: 50%;
+            background: var(--bg); border: 3px solid var(--accent);
+        }
+        .commit.head::before { background: var(--accent); box-shadow: 0 0 18px var(--accent); }
+        .commit .card { padding: 1.5rem 1.6rem; transition: border-color .25s, transform .25s; }
+        .commit .card:hover, .commit.highlight .card { border-color: var(--accent); }
+        .commit.highlight .card { transform: translateX(6px); }
+        .commit-meta { display: flex; flex-wrap: wrap; gap: .5rem .8rem; align-items: center; font-family: var(--font-mono); font-size: .78rem; color: var(--muted); }
+        .hash { color: #f59e0b; }
+        .branch { padding: .1rem .55rem; border-radius: 999px; border: 1px solid var(--border); color: var(--accent-2); }
+        .branch.main { color: #22c55e; }
+        .commit h3, .role-dialog h3 { font-family: var(--font-display); font-size: 1.35rem; margin: .5rem 0 .1rem; }
+        .commit .where, .role-dialog .where { color: var(--accent); font-weight: 500; font-size: .95rem; }
+        .commit ul, .role-dialog ul { list-style: none; margin-top: 1rem; display: grid; gap: .55rem; color: var(--muted); font-size: .95rem; }
+        .commit li, .role-dialog li { position: relative; padding-left: 1.3rem; }
+        .commit li::before, .role-dialog li::before { content: '+'; position: absolute; left: 0; color: #22c55e; font-family: var(--font-mono); }
+
+        /* Skills */
+        .filters { display: flex; flex-wrap: wrap; gap: .5rem; }
+        .filter {
+            padding: .45rem .95rem; border-radius: 999px; font-size: .85rem;
+            border: 1px solid var(--border); background: var(--surface); color: var(--muted);
+        }
+        .filter[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: transparent; }
+        .skill-cloud { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.6rem; }
+        .skill {
+            display: inline-flex; align-items: center; gap: .55rem;
+            padding: .7rem 1.05rem; border-radius: var(--radius); font-weight: 500;
+            border: 1px solid var(--border); background: var(--surface);
+            transition: opacity .3s, transform .3s, border-color .2s;
+        }
+        .skill i { width: 8px; height: 8px; border-radius: 50%; font-style: normal; }
+        .skill[data-group="frontend"] i { background: var(--accent); }
+        .skill[data-group="ai"] i { background: var(--accent-2); }
+        .skill[data-group="backend"] i { background: #f59e0b; }
+        .skill:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .skill.dim { opacity: .18; transform: scale(.96); }
+
+        /* Playground */
+        .play { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+        .controls { padding: 1.6rem; display: grid; gap: 1.4rem; align-content: start; }
+        .control label, .control .label { display: block; font-size: .82rem; font-family: var(--font-mono); color: var(--muted); margin-bottom: .6rem; }
+        .swatches { display: flex; gap: .6rem; flex-wrap: wrap; }
+        .swatch { width: 36px; height: 36px; border-radius: 50%; border: 2px solid transparent; box-shadow: inset 0 0 0 3px var(--bg); }
+        .swatch[aria-pressed="true"] { border-color: var(--text); }
+        input[type="range"] { width: 100%; accent-color: var(--accent); }
+        .switch { display: inline-flex; align-items: center; gap: .6rem; font-size: .9rem; }
+        .switch input { accent-color: var(--accent); width: 18px; height: 18px; }
+        .preview { padding: 1.6rem; display: grid; gap: 1rem; align-content: start; }
+        .preview-card { padding: 1.2rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface-solid); display: grid; gap: .8rem; }
+        .preview-row { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+        .badge { padding: .2rem .65rem; border-radius: 999px; font-size: .75rem; background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); font-weight: 600; }
+        .field { flex: 1; min-width: 140px; padding: .65rem .9rem; border-radius: calc(var(--radius) * .6); border: 1px solid var(--border); background: var(--bg); color: var(--text); font: inherit; }
+        .tokens { font-family: var(--font-mono); font-size: .82rem; padding: 1rem 1.2rem; border-radius: var(--radius); background: var(--bg-2); border: 1px solid var(--border); color: var(--muted); white-space: pre; overflow-x: auto; }
+        .tokens b { color: var(--accent); font-weight: 500; }
+
+        /* Contact terminal */
+        .terminal { overflow: hidden; }
+        .term-bar { display: flex; align-items: center; gap: .45rem; padding: .8rem 1rem; border-bottom: 1px solid var(--border); }
+        .term-bar span { width: 11px; height: 11px; border-radius: 50%; }
+        .term-bar em { margin-left: auto; font-family: var(--font-mono); font-style: normal; font-size: .75rem; color: var(--muted); }
+        .term-body { padding: 1.6rem; font-family: var(--font-mono); font-size: .95rem; display: grid; gap: .9rem; }
+        .prompt { color: #22c55e; }
+        .term-links { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: .6rem; font-family: var(--font-body); }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 2.5rem; align-items: center; }
+        .contact-grid h2 { font-family: var(--font-display); font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1.05; letter-spacing: -0.03em; }
+
+        footer { padding: 2.5rem 0 3rem; text-align: center; color: var(--muted); font-size: .82rem; }
+
+        /* Dialogs */
+        dialog {
+            margin: auto; border: 1px solid var(--border); border-radius: calc(var(--radius) + 4px);
+            background: var(--surface-solid); color: var(--text); width: min(560px, 100% - 2rem); padding: 0;
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,.6);
+        }
+        dialog::backdrop { background: rgba(5, 5, 12, .55); backdrop-filter: blur(4px); }
+        .role-dialog .inner { padding: 1.8rem; }
+        .role-dialog .close { position: absolute; top: .9rem; right: .9rem; }
+        .palette { margin-top: 12vh; }
+        .palette input { width: 100%; padding: 1.1rem 1.2rem; border: 0; border-bottom: 1px solid var(--border); background: transparent; color: var(--text); font: inherit; font-size: 1rem; outline: none; }
+        .palette ul { list-style: none; max-height: 340px; overflow: auto; padding: .5rem; }
+        .palette li { display: flex; justify-content: space-between; align-items: center; padding: .7rem .9rem; border-radius: 10px; cursor: pointer; font-size: .95rem; }
+        .palette li small { color: var(--muted); font-family: var(--font-mono); font-size: .72rem; }
+        .palette li[aria-selected="true"] { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+        .palette .empty { color: var(--muted); padding: 1rem; font-size: .9rem; }
+
+        .toast {
+            position: fixed; bottom: 1.5rem; left: 50%; transform: translate(-50%, 150%);
+            padding: .7rem 1.1rem; border-radius: 999px; background: var(--accent); color: #fff; font-size: .88rem; font-weight: 600;
+            transition: transform .35s ease, opacity .35s ease; z-index: 100; opacity: 0; pointer-events: none;
+        }
+        .toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+        /* Reveal */
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; }
+        .reveal.in { opacity: 1; transform: none; }
+        [data-motion="off"] *, [data-motion="off"] *::before { animation: none !important; transition: none !important; }
+        [data-motion="off"] .reveal { opacity: 1; transform: none; }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .reveal { opacity: 1; transform: none; }
+        }
+
+        @media (max-width: 960px) {
+            .hero-grid, .play, .contact-grid { grid-template-columns: minmax(0, 1fr); }
+            .stage { height: 420px; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .nav-links { display: none; }
+        }
+        @media (max-width: 520px) {
+            .kbd-btn .label, .kbd-btn kbd { display: none; }
+            .kbd-btn { width: 38px; padding: 0; justify-content: center; }
+            .commit { padding-left: 2.6rem; }
+            .gitlog::before { left: 11px; }
+            .commit::before { left: 3px; }
+            .stage { height: 340px; }
+            .hotspot { font-size: .7rem; padding: .3rem .6rem .3rem .35rem; }
+            .hotspot .yr { display: none; }
+        }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300">
-
-    <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-slate-200/50 dark:border-slate-800/50">
-        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="#" class="font-bold text-xl tracking-tight flex items-center gap-2">
-                <span class="gradient-text font-mono">&lt;NM /&gt;</span>
-                <span class="hidden sm:inline text-sm font-medium text-slate-500 dark:text-slate-400">Nikitha Madishetty</span>
-            </a>
-            
-            <div class="flex items-center gap-6">
-                <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
-                    <a href="#about" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">About</a>
-                    <a href="#experience" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Experience</a>
-                    <a href="#skills" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Skills</a>
-                    <a href="#contact" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Contact</a>
-                </div>
-                
-                <button id="themeToggle" class="p-2 rounded-lg bg-slate-200/60 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:ring-2 ring-indigo-500 transition-all">
-                    <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
-                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
-                </button>
-            </div>
+<body>
+    <nav class="nav" aria-label="Primary">
+        <a href="#about" class="logo"><span class="logo-mark">NM</span><span class="muted">nikitha.dev</span></a>
+        <div class="nav-links">
+            <a href="#about">About</a>
+            <a href="#experience">Journey</a>
+            <a href="#skills">Skills</a>
+            <a href="#playground">Playground</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <div class="nav-actions">
+            <button class="kbd-btn" id="paletteBtn" aria-label="Open command palette">
+                <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                <span class="label">Jump to</span><kbd id="kbdHint">Ctrl K</kbd>
+            </button>
+            <button class="icon-btn" id="themeToggle" aria-label="Toggle light and dark theme">
+                <svg class="icon moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+                <svg class="icon sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+            </button>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section id="about" class="min-h-screen pt-32 pb-20 px-6 flex flex-col justify-center relative overflow-hidden">
-        <div class="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            <!-- Left Column: Introduction -->
-            <div class="lg:col-span-8 space-y-6">
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 text-xs font-semibold tracking-wide border border-indigo-200 dark:border-indigo-800">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Senior Frontend Engineer • 7+ Years Exp
+    <main>
+        <section class="hero" id="about">
+            <div class="container hero-grid">
+                <div>
+                    <span class="eyebrow"><span class="pulse"></span>Senior Frontend Engineer · 7+ years</span>
+                    <h1>Nikitha<br>Madishetty</h1>
+                    <h2>Building scalable frontend architectures for <span class="typing" id="typingText">React &amp; Next.js Apps</span><span class="caret" aria-hidden="true"></span></h2>
+                    <p class="lead">Ex-<strong>Wells Fargo</strong>, <strong>Amazon</strong>, and <strong>Google</strong> engineer specializing in design systems, micro-frontends, high-performance UI optimization, and LLM-powered interfaces. Based in Santa Clara, CA.</p>
+                    <div class="cta-row">
+                        <a href="#experience" class="btn btn-primary">Explore my journey &rarr;</a>
+                        <a href="#contact" class="btn">Get in touch</a>
+                    </div>
+                    <p class="hint">Drag the skyline, or click a tower to open that chapter.</p>
                 </div>
-                
-                <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
-                    Building scalable frontend architectures for <br/>
-                    <span class="gradient-text" id="typingText">React & Next.js Apps</span>
-                </h1>
-                
-                <p class="text-lg text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
-                    Ex-<strong>Wells Fargo</strong>, <strong>Amazon</strong>, and <strong>Google</strong> engineer specializing in design systems, micro-frontends, high-performance UI optimization, and LLM-powered interfaces.
-                </p>
-
-                <div class="flex flex-wrap gap-4 pt-4">
-                    <a href="#experience" class="px-6 py-3 rounded-xl gradient-bg text-white font-medium shadow-lg shadow-indigo-500/25 hover:opacity-95 transition-all flex items-center gap-2">
-                        View Work &rarr;
-                    </a>
-                    <a href="#contact" class="px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-700 font-medium hover:bg-slate-100 dark:hover:bg-slate-900 transition-all flex items-center gap-2">
-                        Get in Touch
-                    </a>
-                </div>
-
-                <div class="flex flex-wrap items-center gap-x-6 gap-y-2 pt-6 text-slate-500 dark:text-slate-400">
-                    <span class="text-xs uppercase font-mono tracking-wider text-slate-400">Previously at</span>
-                    <span class="font-semibold text-slate-700 dark:text-slate-200">Wells Fargo</span>
-                    <span class="text-slate-300 dark:text-slate-700">•</span>
-                    <span class="font-semibold text-slate-700 dark:text-slate-200">Amazon (India)</span>
-                    <span class="text-slate-300 dark:text-slate-700">•</span>
-                    <span class="font-semibold text-slate-700 dark:text-slate-200">Google (India)</span>
+                <div class="stage" id="stage" aria-label="Interactive 3D skyline of career milestones">
+                    <div class="stage-fallback">Interactive skyline needs WebGL.<br>Scroll down for the full journey.</div>
                 </div>
             </div>
+        </section>
 
-            <!-- Right Column: Interactive Code Card -->
-            <div class="lg:col-span-4 flex justify-center">
-                <div class="relative w-64 h-64 sm:w-80 sm:h-80 rounded-2xl p-1 gradient-bg shadow-2xl">
-                    <div class="w-full h-full bg-slate-900 rounded-xl p-6 text-mono text-xs text-indigo-300 overflow-hidden flex flex-col justify-between font-mono">
-                        <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
-                            <span class="w-3 h-3 rounded-full bg-red-500"></span>
-                            <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
-                            <span class="w-3 h-3 rounded-full bg-green-500"></span>
-                            <span class="ml-auto text-slate-500">nikitha.ts</span>
+        <section class="block" aria-label="Highlights">
+            <div class="container stats">
+                <div class="card stat reveal"><b>7+</b><span>years shipping production UI</span></div>
+                <div class="card stat reveal"><b>3</b><span>companies: Google, Amazon, Wells Fargo</span></div>
+                <div class="card stat reveal"><b>60%</b><span>faster page loads delivered at Google</span></div>
+                <div class="card stat reveal"><b>0&rarr;1</b><span>React apps for Ring hardware</span></div>
+            </div>
+        </section>
+
+        <section class="block" id="experience">
+            <div class="container">
+                <div class="section-head reveal">
+                    <div>
+                        <div class="tag">$ git log --career</div>
+                        <h2>The journey so far</h2>
+                    </div>
+                    <p>Each role is a commit, with HEAD at the latest. These are the same towers you saw in the skyline.</p>
+                </div>
+                <div class="gitlog">
+                    <article class="commit head reveal" id="role-wellsfargo">
+                        <div class="card">
+                            <div class="commit-meta"><span class="hash">a7f3c21</span><span class="branch main">HEAD &rarr; main</span><span>2023 – Present</span></div>
+                            <h3>Software Engineer</h3>
+                            <div class="where">Wells Fargo · San Francisco, CA</div>
+                            <ul>
+                                <li>Owned frontend architecture for customer-facing banking web/mobile apps and shared design system using React, Next.js (App Router), and TypeScript.</li>
+                                <li>Architected shared design system npm packages documented in Storybook with Chromatic regression testing.</li>
+                                <li>Led legacy module migration (Angular/RxJS) to micro-frontends (Module Federation) without halting features.</li>
+                                <li>Built AI agent and generative-UI features (streaming chat, multi-step workflows) using Claude Code and Figma MCP.</li>
+                            </ul>
                         </div>
-                        <div class="space-y-2 text-slate-300 my-auto">
-                            <p><span class="text-pink-400">const</span> engineer = {</p>
-                            <p class="pl-4"><span class="text-indigo-400">name</span>: <span class="text-emerald-300">'Nikitha'</span>,</p>
-                            <p class="pl-4"><span class="text-indigo-400">role</span>: <span class="text-emerald-300">'Senior Frontend Engineer'</span>,</p>
-                            <p class="pl-4"><span class="text-indigo-400">location</span>: <span class="text-emerald-300">'Santa Clara, CA'</span>,</p>
-                            <p class="pl-4"><span class="text-indigo-400">coreStack</span>: [<span class="text-emerald-300">'React'</span>, <span class="text-emerald-300">'TypeScript'</span>, <span class="text-emerald-300">'Next.js'</span>],</p>
-                            <p class="pl-4"><span class="text-indigo-400">aiTools</span>: [<span class="text-emerald-300">'Claude Code'</span>, <span class="text-emerald-300">'Cursor'</span>, <span class="text-emerald-300">'MCP'</span>]</p>
-                            <p>};</p>
+                    </article>
+                    <article class="commit reveal" id="role-amazon">
+                        <div class="card">
+                            <div class="commit-meta"><span class="hash">5e19b80</span><span class="branch">ring/connected-devices</span><span>2020 – 2022</span></div>
+                            <h3>Associate Software Engineer</h3>
+                            <div class="where">Amazon (Ring) · India</div>
+                            <ul>
+                                <li>Built 0-to-1 React single-page applications for Ring's connected hardware products.</li>
+                                <li>Shipped Manifest V3 Chrome extensions with background service workers and React.</li>
+                                <li>Developed real-time web tools for Amazon Robotics and fulfillment center teams.</li>
+                            </ul>
                         </div>
-                        <div class="text-slate-500 text-right">// 7+ YOE</div>
+                    </article>
+                    <article class="commit reveal" id="role-google">
+                        <div class="card">
+                            <div class="commit-meta"><span class="hash">0c4d2e9</span><span class="branch">shopping/checkout</span><span>2018 – 2020</span></div>
+                            <h3>Web Developer</h3>
+                            <div class="where">Google · India</div>
+                            <ul>
+                                <li>Developed checkout, payment, and configuration flows for Google's product shopping platform.</li>
+                                <li>Improved page load speed by 60% through UI performance optimization and lazy loading.</li>
+                                <li>Converted mockups into custom Web Components adhering strictly to WCAG accessibility rules.</li>
+                            </ul>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="block" id="skills">
+            <div class="container">
+                <div class="section-head reveal">
+                    <div>
+                        <div class="tag">import { stack } from '@nikitha/core'</div>
+                        <h2>Technical stack</h2>
+                    </div>
+                    <div class="filters" role="group" aria-label="Filter skills">
+                        <button class="filter" data-filter="all" aria-pressed="true">All</button>
+                        <button class="filter" data-filter="frontend" aria-pressed="false">Frontend</button>
+                        <button class="filter" data-filter="ai" aria-pressed="false">AI</button>
+                        <button class="filter" data-filter="backend" aria-pressed="false">Backend &amp; Testing</button>
                     </div>
                 </div>
+                <div class="skill-cloud reveal">
+                    <span class="skill" data-group="frontend"><i></i>React</span>
+                    <span class="skill" data-group="frontend"><i></i>Next.js (App Router)</span>
+                    <span class="skill" data-group="frontend"><i></i>TypeScript</span>
+                    <span class="skill" data-group="frontend"><i></i>Redux / Zustand</span>
+                    <span class="skill" data-group="frontend"><i></i>TanStack Query</span>
+                    <span class="skill" data-group="frontend"><i></i>Tailwind CSS</span>
+                    <span class="skill" data-group="frontend"><i></i>Storybook</span>
+                    <span class="skill" data-group="frontend"><i></i>Module Federation</span>
+                    <span class="skill" data-group="frontend"><i></i>Web Components</span>
+                    <span class="skill" data-group="ai"><i></i>Claude Code</span>
+                    <span class="skill" data-group="ai"><i></i>Cursor</span>
+                    <span class="skill" data-group="ai"><i></i>Figma MCP</span>
+                    <span class="skill" data-group="ai"><i></i>OpenAI / Anthropic APIs</span>
+                    <span class="skill" data-group="ai"><i></i>Generative UI</span>
+                    <span class="skill" data-group="backend"><i></i>Node.js</span>
+                    <span class="skill" data-group="backend"><i></i>Python / Django</span>
+                    <span class="skill" data-group="backend"><i></i>GraphQL / REST</span>
+                    <span class="skill" data-group="backend"><i></i>PostgreSQL</span>
+                    <span class="skill" data-group="backend"><i></i>Jest / Playwright</span>
+                    <span class="skill" data-group="backend"><i></i>Docker / AWS</span>
+                </div>
             </div>
+        </section>
 
-        </div>
-    </section>
-
-    <!-- Experience Timeline -->
-    <section id="experience" class="py-20 px-6 bg-slate-100/50 dark:bg-slate-900/40">
-        <div class="max-w-4xl mx-auto space-y-12">
-            <div class="text-center space-y-3">
-                <h2 class="text-3xl font-bold tracking-tight">Professional Experience</h2>
-                <p class="text-slate-600 dark:text-slate-400">Track record of building production systems at scale</p>
-            </div>
-
-            <div class="relative border-l-2 border-slate-300 dark:border-slate-800 ml-4 md:ml-32 space-y-12">
-                <!-- Wells Fargo -->
-                <div class="relative pl-8 group">
-                    <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-indigo-600 border-4 border-slate-50 dark:border-slate-950 group-hover:scale-125 transition-transform"></div>
-                    <div class="hidden md:block absolute -left-36 top-1 text-xs font-mono text-slate-500">2023 – Present</div>
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
-                        <div class="flex flex-wrap justify-between items-start gap-2">
-                            <div>
-                                <h3 class="font-bold text-lg text-slate-900 dark:text-white">Software Engineer</h3>
-                                <p class="text-indigo-600 dark:text-indigo-400 font-medium text-sm">Wells Fargo • San Francisco, CA</p>
+        <section class="block" id="playground">
+            <div class="container">
+                <div class="section-head reveal">
+                    <div>
+                        <div class="tag">// design-tokens.css</div>
+                        <h2>Restyle this site</h2>
+                    </div>
+                    <p>I build design systems, and this page runs on a small one. Change the tokens and the whole site updates, including the 3D skyline.</p>
+                </div>
+                <div class="play">
+                    <div class="card controls reveal">
+                        <div class="control">
+                            <span class="label">--accent</span>
+                            <div class="swatches" id="swatches" role="group" aria-label="Accent color"></div>
+                        </div>
+                        <div class="control">
+                            <label for="radius">--radius: <span id="radiusVal">18</span>px</label>
+                            <input type="range" id="radius" min="0" max="28" value="18">
+                        </div>
+                        <div class="control">
+                            <span class="label">--motion</span>
+                            <label class="switch"><input type="checkbox" id="motion" checked> Animations on</label>
+                        </div>
+                        <div><button class="btn" id="resetTokens">Reset tokens</button></div>
+                    </div>
+                    <div class="card preview reveal">
+                        <div class="preview-card">
+                            <div class="preview-row"><span class="badge">v2.4.0</span><strong>Button / Input / Badge</strong></div>
+                            <div class="preview-row">
+                                <input class="field" placeholder="Search components…" aria-label="Sample input">
+                                <button class="btn btn-primary" type="button">Primary</button>
                             </div>
-                            <span class="md:hidden text-xs font-mono text-slate-500">2023 – Present</span>
                         </div>
-                        <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-2 list-disc list-inside">
-                            <li>Owned frontend architecture for customer-facing banking web/mobile apps and shared design system using React, Next.js (App Router), and TypeScript.</li>
-                            <li>Architected shared design system npm packages documented in Storybook with Chromatic regression testing.</li>
-                            <li>Led legacy module migration (Angular/RxJS) to micro-frontends (Module Federation) without halting features.</li>
-                            <li>Built AI agent and generative-UI features (streaming chat, multi-step workflows) using Claude Code and Figma MCP.</li>
-                        </ul>
+                        <div class="tokens" id="tokenOut" aria-live="polite"></div>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <!-- Amazon -->
-                <div class="relative pl-8 group">
-                    <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-slate-400 dark:bg-slate-700 border-4 border-slate-50 dark:border-slate-950 group-hover:scale-125 transition-transform"></div>
-                    <div class="hidden md:block absolute -left-36 top-1 text-xs font-mono text-slate-500">2020 – 2022</div>
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
-                        <div class="flex flex-wrap justify-between items-start gap-2">
-                            <div>
-                                <h3 class="font-bold text-lg text-slate-900 dark:text-white">Associate Software Engineer</h3>
-                               <p class="text-indigo-600 dark:text-indigo-400 font-medium text-sm">Amazon (Ring) • India</p>
-                            </div>
-                            <span class="md:hidden text-xs font-mono text-slate-500">2020 – 2022</span>
+        <section class="block" id="contact">
+            <div class="container contact-grid">
+                <div class="reveal">
+                    <div class="section-head" style="margin:0"><div class="tag">$ ./say-hello.sh</div></div>
+                    <h2>Let's build something <span class="accent">great</span>.</h2>
+                    <p class="muted" style="margin-top:1rem;max-width:28rem">Based in Santa Clara, CA. Reach out about senior engineering roles, design systems work, or AI consulting.</p>
+                </div>
+                <div class="card terminal reveal">
+                    <div class="term-bar"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span><em>~/nikitha — zsh</em></div>
+                    <div class="term-body">
+                        <div><span class="prompt">❯</span> whoami</div>
+                        <div class="muted">Senior Frontend Engineer · React · Next.js · TypeScript</div>
+                        <div><span class="prompt">❯</span> contact --email</div>
+                        <div><a href="mailto:nikithamadis@gmail.com" class="accent">nikithamadis@gmail.com</a></div>
+                        <div class="term-links">
+                            <button class="btn btn-primary" id="copyEmail" type="button">Copy email</button>
+                            <a class="btn" href="https://www.linkedin.com/in/nikitha-madishetty" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+                            <a class="btn" href="https://github.com/nikitha922" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
                         </div>
-                        <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-2 list-disc list-inside">
-                            <li>Built 0-to-1 React single-page applications for Ring's connected hardware products.</li>
-                            <li>Shipped Manifest V3 Chrome extensions with background service workers and React.</li>
-                            <li>Developed real-time web tools for Amazon Robotics and fulfillment center teams.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Google -->
-                <div class="relative pl-8 group">
-                    <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-slate-400 dark:bg-slate-700 border-4 border-slate-50 dark:border-slate-950 group-hover:scale-125 transition-transform"></div>
-                    <div class="hidden md:block absolute -left-36 top-1 text-xs font-mono text-slate-500">2018 – 2020</div>
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
-                        <div class="flex flex-wrap justify-between items-start gap-2">
-                            <div>
-                                <h3 class="font-bold text-lg text-slate-900 dark:text-white">Web Developer</h3>
-                              <p class="text-indigo-600 dark:text-indigo-400 font-medium text-sm">Google • India</p>
-                            </div>
-                            <span class="md:hidden text-xs font-mono text-slate-500">2018 – 2020</span>
-                        </div>
-                        <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-2 list-disc list-inside">
-                            <li>Developed checkout, payment, and configuration flows for Google's product shopping platform.</li>
-                            <li>Improved page load speed by 60% through UI performance optimization and lazy loading.</li>
-                            <li>Converted mockups into custom Web Components adhering strictly to WCAG accessibility rules.</li>
-                        </ul>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <!-- Skills Section -->
-    <section id="skills" class="py-20 px-6">
-        <div class="max-w-6xl mx-auto space-y-12">
-            <div class="text-center space-y-3">
-                <h2 class="text-3xl font-bold tracking-tight">Technical Stack & Capabilities</h2>
-                <p class="text-slate-600 dark:text-slate-400">Comprehensive toolset across frontend, backend, and AI integrations</p>
-            </div>
+    <footer>© 2026 Nikitha Madishetty · Hand-built with HTML, CSS &amp; Three.js</footer>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 flex items-center justify-center">
-                        <i data-lucide="layout" class="w-5 h-5"></i>
-                    </div>
-                    <h3 class="font-bold text-lg">Frontend Core</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">React</span>
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">Next.js (App Router)</span>
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">TypeScript</span>
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">Redux / Zustand</span>
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">TanStack Query</span>
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">Tailwind CSS</span>
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">Storybook</span>
-                    </div>
-                </div>
+    <dialog class="role-dialog" id="roleDialog" aria-labelledby="roleDialogTitle">
+        <button class="icon-btn close" id="roleClose" aria-label="Close">✕</button>
+        <div class="inner" id="roleBody"></div>
+    </dialog>
 
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
-                    <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950/80 text-purple-600 flex items-center justify-center">
-                        <i data-lucide="bot" class="w-5 h-5"></i>
-                    </div>
-                    <h3 class="font-bold text-lg">AI Tools & Workflows</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-2.5 py-1 rounded-md bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 text-xs font-medium border border-purple-200 dark:border-purple-800">Claude Code</span>
-                        <span class="px-2.5 py-1 rounded-md bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 text-xs font-medium border border-purple-200 dark:border-purple-800">Cursor</span>
-                        <span class="px-2.5 py-1 rounded-md bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 text-xs font-medium border border-purple-200 dark:border-purple-800">Figma MCP</span>
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">OpenAI / Anthropic APIs</span>
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">Generative UI</span>
-                    </div>
-                </div>
+    <dialog class="palette" id="palette" aria-label="Command palette">
+        <input id="paletteInput" type="text" placeholder="Type a command or section…" autocomplete="off" aria-controls="paletteList">
+        <ul id="paletteList" role="listbox"></ul>
+    </dialog>
 
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
-                    <div class="w-10 h-10 rounded-xl bg-pink-100 dark:bg-pink-950/80 text-pink-600 flex items-center justify-center">
-                        <i data-lucide="server" class="w-5 h-5"></i>
-                    </div>
-                    <h3 class="font-bold text-lg">Backend & Testing</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">Node.js</span>
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">Python / Django</span>
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">GraphQL / REST</span>
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">PostgreSQL</span>
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">Jest / Playwright</span>
-                        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium">Docker / AWS</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-20 px-6 bg-slate-100/50 dark:bg-slate-900/40">
-        <div class="max-w-3xl mx-auto space-y-8 text-center">
-            <h2 class="text-3xl font-bold tracking-tight">Let's Connect</h2>
-            <p class="text-slate-600 dark:text-slate-400 max-w-lg mx-auto">
-                Currently based in Santa Clara, CA. Feel free to reach out for senior engineering opportunities, design systems collaboration, or AI consulting.
-            </p>
-
-            <!-- Direct Email Badge -->
-            <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-sm font-medium">
-                <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                <a href="mailto:nikithamadis@gmail.com" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                    nikithamadis@gmail.com
-                </a>
-            </div>
-
-            <!-- Social & Email Icon Buttons -->
-            <div class="flex justify-center items-center gap-6 pt-4">
-                <!-- Email -->
-                <a href="mailto:nikithamadis@gmail.com" class="p-3.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:scale-110 transition-transform flex items-center justify-center" title="Send Email">
-                    <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                </a>
-                <!-- LinkedIn -->
-                <a href="https://www.linkedin.com/in/nikitha-madishetty" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:scale-110 transition-transform flex items-center justify-center" title="LinkedIn Profile">
-                    <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
-                </a>
-                <!-- GitHub -->
-                <a href="https://github.com/nikitha922" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:scale-110 transition-transform flex items-center justify-center" title="GitHub Profile">
-                    <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
-                </a>
-            </div>
-        </div>
-    </section>
-    <footer class="py-8 text-center text-xs text-slate-500 border-t border-slate-200 dark:border-slate-800">
-        © 2026 Nikitha Madishetty. Built with HTML & Tailwind CSS.
-    </footer>
+    <div class="toast" id="toast" role="status"></div>
 
     <script>
-        lucide.createIcons();
+        (function () {
+            var root = document.documentElement;
+            var store = {
+                get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+            };
+            var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var motionOff = function () { return reduceMotion || root.getAttribute('data-motion') === 'off'; };
 
-        // Dark mode toggle
-        const themeToggle = document.getElementById('themeToggle');
-        themeToggle.addEventListener('click', () => {
-            const isDark = document.documentElement.classList.toggle('dark');
-            try {
-                localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            } catch (e) {}
-        });
-
-        // Typing effect
-        const words = ["React & Next.js Apps", "Enterprise Design Systems", "LLM & AI Interfaces", "Micro-Frontend Architectures"];
-        let wordIndex = 0;
-        let charIndex = 0;
-        let isDeleting = false;
-        const typingElement = document.getElementById('typingText');
-
-        function typeEffect() {
-            const currentWord = words[wordIndex];
-            if (isDeleting) {
-                typingElement.textContent = currentWord.substring(0, charIndex - 1);
-                charIndex--;
-            } else {
-                typingElement.textContent = currentWord.substring(0, charIndex + 1);
-                charIndex++;
+            function toast(msg) {
+                var t = document.getElementById('toast');
+                t.textContent = msg; t.classList.add('show');
+                clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove('show'); }, 1800);
             }
+            window.__toast = toast;
 
-            if (!isDeleting && charIndex === currentWord.length) {
-                isDeleting = true;
-                setTimeout(typeEffect, 2000);
-            } else if (isDeleting && charIndex === 0) {
-                isDeleting = false;
-                wordIndex = (wordIndex + 1) % words.length;
-                setTimeout(typeEffect, 500);
-            } else {
-                setTimeout(typeEffect, isDeleting ? 50 : 100);
+            // Theme
+            function setTheme(light) {
+                if (light) root.setAttribute('data-theme', 'light'); else root.removeAttribute('data-theme');
+                store.set('theme', light ? 'light' : 'dark');
+                window.dispatchEvent(new Event('tokenschange'));
+            }
+            function toggleTheme() { setTheme(root.getAttribute('data-theme') !== 'light'); }
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+            // Typing effect
+            var words = ['React & Next.js Apps', 'Enterprise Design Systems', 'LLM & AI Interfaces', 'Micro-Frontend Architectures'];
+            var el = document.getElementById('typingText');
+            var wi = 0, ci = words[0].length, deleting = true;
+            function type() {
+                if (motionOff()) { el.textContent = words[0]; setTimeout(type, 1000); return; }
+                var w = words[wi];
+                ci += deleting ? -1 : 1;
+                el.textContent = w.substring(0, ci);
+                var delay = deleting ? 45 : 90;
+                if (!deleting && ci === w.length) { deleting = true; delay = 2000; }
+                else if (deleting && ci === 0) { deleting = false; wi = (wi + 1) % words.length; delay = 400; }
+                setTimeout(type, delay);
+            }
+            setTimeout(type, 2200);
+
+            // Reveal on scroll
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+            }, { threshold: 0.12 });
+            document.querySelectorAll('.reveal').forEach(function (n) { io.observe(n); });
+
+            // Skill filters
+            document.querySelectorAll('.filter').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var f = btn.dataset.filter;
+                    document.querySelectorAll('.filter').forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
+                    document.querySelectorAll('.skill').forEach(function (s) { s.classList.toggle('dim', f !== 'all' && s.dataset.group !== f); });
+                });
+            });
+
+            // Design tokens playground
+            var DEFAULTS = { accent: '#7c5cff', radius: 18, motion: true };
+            var COLORS = ['#7c5cff', '#22d3ee', '#10b981', '#f59e0b', '#f43f5e', '#3b82f6'];
+            var tokens = Object.assign({}, DEFAULTS);
+            try { Object.assign(tokens, JSON.parse(store.get('tokens') || '{}')); } catch (e) {}
+            var swatches = document.getElementById('swatches');
+            COLORS.forEach(function (c) {
+                var b = document.createElement('button');
+                b.className = 'swatch'; b.style.background = c; b.dataset.color = c;
+                b.setAttribute('aria-label', 'Accent ' + c);
+                b.addEventListener('click', function () { tokens.accent = c; applyTokens(); });
+                swatches.appendChild(b);
+            });
+            var radius = document.getElementById('radius');
+            var motion = document.getElementById('motion');
+            radius.addEventListener('input', function () { tokens.radius = +radius.value; applyTokens(); });
+            motion.addEventListener('change', function () { tokens.motion = motion.checked; applyTokens(); });
+            document.getElementById('resetTokens').addEventListener('click', function () { tokens = Object.assign({}, DEFAULTS); applyTokens(); toast('Tokens reset'); });
+            function applyTokens() {
+                root.style.setProperty('--accent', tokens.accent);
+                root.style.setProperty('--radius', tokens.radius + 'px');
+                if (tokens.motion) root.removeAttribute('data-motion'); else root.setAttribute('data-motion', 'off');
+                radius.value = tokens.radius; motion.checked = tokens.motion;
+                document.getElementById('radiusVal').textContent = tokens.radius;
+                swatches.querySelectorAll('.swatch').forEach(function (s) { s.setAttribute('aria-pressed', String(s.dataset.color === tokens.accent)); });
+                document.getElementById('tokenOut').innerHTML =
+                    ':root {\n  --accent: <b>' + tokens.accent + '</b>;\n  --radius: <b>' + tokens.radius + 'px</b>;\n  --motion: <b>' + (tokens.motion ? 'on' : 'off') + '</b>;\n}';
+                store.set('tokens', JSON.stringify(tokens));
+                window.dispatchEvent(new Event('tokenschange'));
+            }
+            applyTokens();
+
+            // Copy email
+            var EMAIL = 'nikithamadis@gmail.com';
+            function copyEmail() {
+                var done = function () { toast('Email copied to clipboard'); };
+                if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(EMAIL).then(done, function () { location.href = 'mailto:' + EMAIL; });
+                else location.href = 'mailto:' + EMAIL;
+            }
+            document.getElementById('copyEmail').addEventListener('click', copyEmail);
+
+            // Role dialog (shared with the 3D skyline)
+            var roleDialog = document.getElementById('roleDialog');
+            window.openRole = function (id) {
+                var src = document.getElementById(id);
+                if (!src) return;
+                var body = document.getElementById('roleBody');
+                body.innerHTML = src.querySelector('.card').innerHTML;
+                var h = body.querySelector('h3'); if (h) h.id = 'roleDialogTitle';
+                var more = document.createElement('p');
+                more.style.marginTop = '1.2rem';
+                more.innerHTML = '<a class="accent" href="#' + id + '">See it in the journey &darr;</a>';
+                more.querySelector('a').addEventListener('click', function () { roleDialog.close(); highlight(id); });
+                body.appendChild(more);
+                roleDialog.showModal();
+            };
+            function highlight(id) {
+                var n = document.getElementById(id);
+                n.classList.add('highlight');
+                setTimeout(function () { n.classList.remove('highlight'); }, 2200);
+            }
+            document.getElementById('roleClose').addEventListener('click', function () { roleDialog.close(); });
+            roleDialog.addEventListener('click', function (e) { if (e.target === roleDialog) roleDialog.close(); });
+
+            // Command palette
+            var isMac = /Mac|iPhone|iPad/.test(navigator.platform);
+            document.getElementById('kbdHint').textContent = isMac ? '⌘K' : 'Ctrl K';
+            var palette = document.getElementById('palette');
+            var input = document.getElementById('paletteInput');
+            var list = document.getElementById('paletteList');
+            var go = function (hash) { return function () { location.hash = ''; location.hash = hash; }; };
+            var commands = [
+                { label: 'Go to About', hint: 'section', run: go('#about') },
+                { label: 'Go to Journey', hint: 'section', run: go('#experience') },
+                { label: 'Go to Skills', hint: 'section', run: go('#skills') },
+                { label: 'Go to Playground', hint: 'section', run: go('#playground') },
+                { label: 'Go to Contact', hint: 'section', run: go('#contact') },
+                { label: 'Open Wells Fargo chapter', hint: '2023 – now', run: function () { openRole('role-wellsfargo'); } },
+                { label: 'Open Amazon (Ring) chapter', hint: '2020 – 22', run: function () { openRole('role-amazon'); } },
+                { label: 'Open Google chapter', hint: '2018 – 20', run: function () { openRole('role-google'); } },
+                { label: 'Toggle light / dark theme', hint: 'action', run: toggleTheme },
+                { label: 'Copy email address', hint: 'action', run: copyEmail },
+                { label: 'Open LinkedIn', hint: 'link ↗', run: function () { window.open('https://www.linkedin.com/in/nikitha-madishetty', '_blank', 'noopener'); } },
+                { label: 'Open GitHub', hint: 'link ↗', run: function () { window.open('https://github.com/nikitha922', '_blank', 'noopener'); } }
+            ];
+            var filtered = commands, sel = 0;
+            function render() {
+                var q = input.value.trim().toLowerCase();
+                filtered = commands.filter(function (c) { return c.label.toLowerCase().indexOf(q) !== -1; });
+                sel = Math.min(sel, Math.max(filtered.length - 1, 0));
+                list.innerHTML = '';
+                if (!filtered.length) { list.innerHTML = '<li class="empty">No matches</li>'; return; }
+                filtered.forEach(function (c, i) {
+                    var li = document.createElement('li');
+                    li.setAttribute('role', 'option');
+                    li.setAttribute('aria-selected', String(i === sel));
+                    li.innerHTML = '<span></span><small></small>';
+                    li.firstChild.textContent = c.label; li.lastChild.textContent = c.hint;
+                    li.addEventListener('mousemove', function () { if (sel !== i) { sel = i; render(); } });
+                    li.addEventListener('click', function () { runCmd(i); });
+                    list.appendChild(li);
+                });
+            }
+            function runCmd(i) { var c = filtered[i]; if (!c) return; palette.close(); c.run(); }
+            function openPalette() { input.value = ''; sel = 0; render(); palette.showModal(); input.focus(); }
+            document.getElementById('paletteBtn').addEventListener('click', openPalette);
+            input.addEventListener('input', function () { sel = 0; render(); });
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'ArrowDown') { e.preventDefault(); sel = (sel + 1) % Math.max(filtered.length, 1); render(); }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); sel = (sel - 1 + filtered.length) % Math.max(filtered.length, 1); render(); }
+                else if (e.key === 'Enter') { e.preventDefault(); runCmd(sel); }
+            });
+            palette.addEventListener('click', function (e) { if (e.target === palette) palette.close(); });
+            document.addEventListener('keydown', function (e) {
+                if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+                    e.preventDefault();
+                    if (palette.open) palette.close(); else openPalette();
+                }
+            });
+        })();
+    </script>
+
+    <script type="importmap">
+        { "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        } }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+        const stage = document.getElementById('stage');
+        const root = document.documentElement;
+        const css = (name) => getComputedStyle(root).getPropertyValue(name).trim();
+        const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches || root.getAttribute('data-motion') === 'off';
+
+        let renderer;
+        try {
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        } catch (e) {
+            stage.classList.add('no-webgl');
+            throw e;
+        }
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        stage.appendChild(renderer.domElement);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 200);
+        const CAM_RADIUS = 26, CAM_HEIGHT = 15;
+
+        scene.add(new THREE.HemisphereLight(0xffffff, 0x444466, 1.1));
+        const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+        sun.position.set(8, 16, 6);
+        sun.castShadow = true;
+        sun.shadow.mapSize.set(1024, 1024);
+        Object.assign(sun.shadow.camera, { left: -10, right: 10, top: 10, bottom: -10 });
+        scene.add(sun);
+
+        const world = new THREE.Group();
+        scene.add(world);
+
+        const platformMat = new THREE.MeshStandardMaterial({ roughness: 0.85 });
+        const platform = new THREE.Mesh(new RoundedBoxGeometry(12, 0.8, 12, 4, 0.35), platformMat);
+        platform.position.y = -0.4;
+        platform.receiveShadow = true;
+        world.add(platform);
+
+        // Deterministic little city blocks
+        let seed = 7;
+        const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+        const blockMat = new THREE.MeshStandardMaterial({ roughness: 0.7 });
+        const blockGeo = new RoundedBoxGeometry(1, 1, 1, 2, 0.12);
+        for (let x = -5; x <= 5; x += 1.25) {
+            for (let z = -5; z <= 5; z += 1.25) {
+                if (Math.abs(x - z) < 2.6 || rand() > 0.55) continue;
+                const h = 0.3 + rand() * 1.2;
+                const b = new THREE.Mesh(blockGeo, blockMat);
+                b.scale.set(0.8, h, 0.8);
+                b.position.set(x, h / 2, z);
+                b.castShadow = b.receiveShadow = true;
+                world.add(b);
             }
         }
-        typeEffect();
+
+        // Career towers along a diagonal "timeline street"
+        const roles = [
+            { id: 'role-google', name: 'Google', year: '2018', h: 2.8, pos: [-3.6, -3.6] },
+            { id: 'role-amazon', name: 'Amazon', year: '2020', h: 4.4, pos: [0, 0] },
+            { id: 'role-wellsfargo', name: 'Wells Fargo', year: '2023', h: 6.2, pos: [3.6, 3.6] }
+        ];
+        const towerMat = new THREE.MeshStandardMaterial({ roughness: 0.4, metalness: 0.1 });
+        const glowMat = new THREE.MeshStandardMaterial({ emissiveIntensity: 1.4, roughness: 0.3 });
+        const windowMat = new THREE.MeshStandardMaterial({ emissiveIntensity: 0.35, roughness: 0.5, transparent: true, opacity: 0.85 });
+        const pickables = [];
+        roles.forEach((r) => {
+            const g = new THREE.Group();
+            g.position.set(r.pos[0], 0, r.pos[1]);
+            const body = new THREE.Mesh(new RoundedBoxGeometry(1.6, r.h, 1.6, 3, 0.18), towerMat);
+            body.position.y = r.h / 2;
+            body.castShadow = body.receiveShadow = true;
+            body.userData.role = r;
+            g.add(body);
+            for (let y = 0.7; y < r.h - 0.4; y += 0.75) {
+                const stripe = new THREE.Mesh(new THREE.BoxGeometry(1.63, 0.05, 1.63), windowMat);
+                stripe.position.y = y;
+                g.add(stripe);
+            }
+            const cap = new THREE.Mesh(new RoundedBoxGeometry(1.7, 0.22, 1.7, 2, 0.08), glowMat);
+            cap.position.y = r.h + 0.11;
+            cap.userData.role = r;
+            g.add(cap);
+            pickables.push(body, cap);
+            r.group = g;
+            r.top = new THREE.Vector3(r.pos[0], r.h + 0.9, r.pos[1]);
+            world.add(g);
+        });
+
+        // Glowing path that links the chapters
+        const curve = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(-5.4, 0.12, -4.6),
+            new THREE.Vector3(-3.6, 0.12, -2.2),
+            new THREE.Vector3(-1.4, 0.12, -1.0),
+            new THREE.Vector3(1.4, 0.12, 1.0),
+            new THREE.Vector3(3.6, 0.12, 2.2),
+            new THREE.Vector3(5.2, 0.12, 4.8)
+        ]);
+        const pathMat = new THREE.MeshStandardMaterial({ emissiveIntensity: 1.2, roughness: 0.4 });
+        world.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 120, 0.07, 8, false), pathMat));
+
+        const orbMat = new THREE.MeshStandardMaterial({ emissiveIntensity: 2.2 });
+        const orb = new THREE.Mesh(new THREE.SphereGeometry(0.22, 24, 24), orbMat);
+        const orbLight = new THREE.PointLight(0xffffff, 6, 5, 2);
+        orb.add(orbLight);
+        world.add(orb);
+
+        // Floating particles
+        const pCount = 140;
+        const pPos = new Float32Array(pCount * 3);
+        for (let i = 0; i < pCount; i++) {
+            pPos[i * 3] = (rand() - 0.5) * 18;
+            pPos[i * 3 + 1] = rand() * 9;
+            pPos[i * 3 + 2] = (rand() - 0.5) * 18;
+        }
+        const pGeo = new THREE.BufferGeometry();
+        pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+        const pMat = new THREE.PointsMaterial({ size: 0.06, transparent: true, opacity: 0.7 });
+        const particles = new THREE.Points(pGeo, pMat);
+        world.add(particles);
+
+        function applyColors() {
+            const accent = new THREE.Color(css('--accent') || '#7c5cff');
+            const accent2 = new THREE.Color(css('--accent-2') || '#22d3ee');
+            platformMat.color.set(css('--platform'));
+            blockMat.color.set(css('--block'));
+            towerMat.color.set(css('--tower'));
+            glowMat.color.copy(accent); glowMat.emissive.copy(accent);
+            windowMat.color.copy(accent2); windowMat.emissive.copy(accent2);
+            pathMat.color.copy(accent); pathMat.emissive.copy(accent);
+            orbMat.color.set(0xffffff); orbMat.emissive.copy(accent2);
+            orbLight.color.copy(accent2);
+            pMat.color.copy(accent);
+            hotspots.forEach((h) => (h.style.borderColor = ''));
+        }
+
+        // HTML hotspots pinned to tower tops
+        const hotspots = roles.map((r) => {
+            const b = document.createElement('button');
+            b.className = 'hotspot';
+            b.innerHTML = '<span class="dot">●</span><span></span><span class="yr"></span>';
+            b.children[1].textContent = r.name;
+            b.children[2].textContent = r.year;
+            b.setAttribute('aria-label', `Open ${r.name} chapter, ${r.year}`);
+            b.addEventListener('click', () => window.openRole(r.id));
+            b.addEventListener('mouseenter', () => (hovered = r));
+            b.addEventListener('mouseleave', () => (hovered = null));
+            stage.appendChild(b);
+            r.hotspot = b;
+            return b;
+        });
+        applyColors();
+        window.addEventListener('tokenschange', applyColors);
+
+        // Interaction: drag to orbit, hover/click towers
+        const BASE_ANGLE = (3 * Math.PI) / 4 - 0.45;
+        let angle = BASE_ANGLE, targetAngle = angle, dragging = false, dragStartX = 0, dragStartAngle = 0, moved = false;
+        let hovered = null;
+        const pointer = new THREE.Vector2(), raycaster = new THREE.Raycaster();
+        const mouse = { x: 0, y: 0 };
+        const el = renderer.domElement;
+        el.style.cursor = 'grab';
+        el.style.touchAction = 'pan-y';
+        el.addEventListener('pointerdown', (e) => {
+            dragging = true; moved = false; dragStartX = e.clientX; dragStartAngle = targetAngle;
+            el.style.cursor = 'grabbing';
+        });
+        window.addEventListener('pointerup', () => { dragging = false; el.style.cursor = 'grab'; });
+        el.addEventListener('pointermove', (e) => {
+            const rect = el.getBoundingClientRect();
+            pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+            mouse.x = pointer.x; mouse.y = pointer.y;
+            if (dragging) {
+                const dx = e.clientX - dragStartX;
+                if (Math.abs(dx) > 3) moved = true;
+                targetAngle = dragStartAngle - dx * 0.008;
+            }
+            raycaster.setFromCamera(pointer, camera);
+            const hit = raycaster.intersectObjects(pickables, false)[0];
+            hovered = hit ? hit.object.userData.role : null;
+            el.style.cursor = dragging ? 'grabbing' : hovered ? 'pointer' : 'grab';
+        });
+        el.addEventListener('pointerleave', () => { hovered = null; mouse.x = mouse.y = 0; });
+        el.addEventListener('click', () => { if (!moved && hovered) window.openRole(hovered.id); });
+
+        function resize() {
+            const { clientWidth: w, clientHeight: h } = stage;
+            renderer.setSize(w, h, false);
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+        }
+        new ResizeObserver(resize).observe(stage);
+        resize();
+
+        let visible = true;
+        new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(stage);
+
+        const clock = new THREE.Clock();
+        const tmp = new THREE.Vector3();
+        let orbT = 0;
+        function frame() {
+            requestAnimationFrame(frame);
+            if (!visible) return;
+            const dt = Math.min(clock.getDelta(), 0.05);
+            const still = reduceMotion();
+            const t = clock.elapsedTime;
+
+            const scrollTilt = Math.min(window.scrollY / window.innerHeight, 1);
+            angle += (targetAngle - angle) * 0.08;
+            const a = angle + (still ? 0 : mouse.x * 0.15 + Math.sin(t * 0.25) * 0.25);
+            camera.position.set(Math.cos(a) * CAM_RADIUS, CAM_HEIGHT + mouse.y * 1.5 + scrollTilt * 6, Math.sin(a) * CAM_RADIUS);
+            camera.lookAt(0, 2 - scrollTilt * 1.5, 0);
+
+            world.position.y = still ? 0 : Math.sin(t * 0.8) * 0.15;
+            if (!still) {
+                orbT = (orbT + dt * 0.06) % 1;
+                particles.rotation.y += dt * 0.02;
+            }
+            orb.position.copy(curve.getPointAt(orbT)).add(tmp.set(0, 0.35, 0));
+
+            roles.forEach((r) => {
+                const s = hovered === r ? 1.06 : 1;
+                r.group.scale.y += (s - r.group.scale.y) * 0.15;
+                tmp.copy(r.top).applyMatrix4(world.matrixWorld).project(camera);
+                const x = (tmp.x * 0.5 + 0.5) * stage.clientWidth;
+                const y = (-tmp.y * 0.5 + 0.5) * stage.clientHeight;
+                r.hotspot.style.transform = `translate(${x}px, ${y}px) translate(-50%, -100%)`;
+                r.hotspot.classList.add('ready');
+                r.hotspot.classList.toggle('active', hovered === r);
+            });
+
+            renderer.render(scene, camera);
+        }
+        frame();
     </script>
 </body>
 </html>
